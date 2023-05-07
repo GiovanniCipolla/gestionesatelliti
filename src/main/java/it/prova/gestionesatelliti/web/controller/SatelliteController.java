@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,7 +67,7 @@ public class SatelliteController {
 			return "satellite/insert";
 		}
 
-		if (satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0) {
+		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0  ) {
 			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
 			return "satellite/insert";
 		}
@@ -109,4 +110,15 @@ public class SatelliteController {
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
 	}
+	
+	@GetMapping("/show/{idSatellite}")
+	public String show(@PathVariable(required = true) Long idSatellite, Model model) {
+		model.addAttribute("show_satellite_attr", satelliteService.caricaSingoloElemento(idSatellite));
+		return "satellite/show";
+	}
+	
+	
+	
+	
+	
 }
