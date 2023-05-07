@@ -67,7 +67,8 @@ public class SatelliteController {
 			return "satellite/insert";
 		}
 
-		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0  ) {
+		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null
+				&& satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0) {
 			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
 			return "satellite/insert";
 		}
@@ -92,7 +93,7 @@ public class SatelliteController {
 				return "satellite/insert";
 			}
 
-			if (satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
+			if ( satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
 				result.rejectValue("dataRientro", "error.satellite",
 						"con questo stato , la data di lancio deve essere successiva alla data odierna");
 				return "satellite/insert";
@@ -110,15 +111,34 @@ public class SatelliteController {
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
 	}
-	
+
 	@GetMapping("/show/{idSatellite}")
 	public String show(@PathVariable(required = true) Long idSatellite, Model model) {
 		model.addAttribute("show_satellite_attr", satelliteService.caricaSingoloElemento(idSatellite));
 		return "satellite/show";
 	}
+
+	@GetMapping("/delete/{idSatellite}")
+	public String prepareDelete(@PathVariable(required = true) Long idSatellite, Model model,
+			RedirectAttributes redirectAttributes) {
+		
+		Satellite verificaSatellite = satelliteService.caricaSingoloElemento(idSatellite);
+		
+		if (verificaSatellite.getStato() != null) {
+			redirectAttributes.addFlashAttribute("errorMessage",
+					"Impossibile eliminare il satellite perché è in uno stato non eliminabile.");
+			return "redirect:/satellite";
+		}
+		
+		model.addAttribute("delete_satellite_attr", verificaSatellite);
+		return "satellite/delete";
+	}
 	
-	
-	
-	
-	
+	@PostMapping("/delete")
+	public String delete(Long id,RedirectAttributes redirectAttrs) {
+		satelliteService.rimuovi(id);
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
+
 }
