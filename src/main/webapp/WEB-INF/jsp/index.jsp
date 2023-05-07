@@ -87,10 +87,21 @@
 			        <div class="feature-icon bg-primary bg-gradient">
 			          <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>
 			        </div>
-			        <h2>Altra Funzione</h2>
-			        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+			        <h2>Liste</h2>
 			        <a href="satellite/" class="icon-link">
-			          lista satelliti
+			        lista satelliti
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			        <a href="satellite/lanciatiDaPiu2Anni" class="icon-link">
+			          Lanciati da più di due anni(attivi)
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			        <a href="satellite/disattivatiNonRientrati" class="icon-link">
+			          Disattivati ma non rientrati
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			        <a href="satellite/Fissi10" class="icon-link">
+			          fissi in orbita da 10 anni
 			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
 			        </a>
 			      </div>

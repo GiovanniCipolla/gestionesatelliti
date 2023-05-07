@@ -92,7 +92,7 @@
 						class='btn btn-outline-secondary' style='width: 80px'> <i
 						class='fa fa-chevron-left'></i> Back
 					</a> <a class="btn btn-sm btn-outline-primary ml-2"
-						href="${pageContext.request.contextPath}/satellite/edit/${SatelliteItem.id}">
+						href="${pageContext.request.contextPath}/satellite/edit/${show_satellite_attr.id }">
 						Edit</a>
 				</div>
 				<!-- end card -->

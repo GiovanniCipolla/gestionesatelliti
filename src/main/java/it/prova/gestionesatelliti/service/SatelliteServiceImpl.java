@@ -1,6 +1,9 @@
 package it.prova.gestionesatelliti.service;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.criteria.Predicate;
 
@@ -8,8 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.gestionesatelliti.model.Satellite;
+import it.prova.gestionesatelliti.model.StatoSatellite;
 import it.prova.gestionesatelliti.repository.SatelliteRepository;
 
 @Service
@@ -74,5 +79,52 @@ public class SatelliteServiceImpl implements SatelliteService {
 		return repository.findAll(specificationCriteria);
 	}
 
+	@Override
+	@Transactional
+	public void lancio(Long id) {
+
+		Satellite satellite = repository.findById(id).orElse(null);
+		satellite.setDataLancio(LocalDate.now());
+		satellite.setStato(StatoSatellite.IN_MOVIMENTO);
+		repository.save(satellite);
+	}
+	
+	@Override
+	@Transactional
+	public void rientro(Long id) {
+		
+		Satellite satellite = repository.findById(id).orElse(null);
+		satellite.setDataRientro(LocalDate.now());
+		satellite.setStato(StatoSatellite.DISABILITATO);
+		repository.save(satellite);
+		
+		;
+
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Satellite> lanciatiDa2AnniOPiuAttivi() {
+		
+		List<StatoSatellite> attivi = Arrays.asList(StatoSatellite.FISSO,StatoSatellite.IN_MOVIMENTO);
+	
+		return repository.findAllByStatoInAndDataLancioLessThan(attivi,LocalDate.now().minusYears(2));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Satellite> disattivatiInOrbita() {
+		
+		return repository.findAllByStatoAndDataRientroIsNull(StatoSatellite.DISABILITATO);
+		
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Satellite> lanciatiDa10AnniFissi() {
+		
+		return repository.findAllByStatoAndDataLancioLessThan(StatoSatellite.FISSO, LocalDate.now().minusYears(10));
+	}
+	
 
 }

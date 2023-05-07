@@ -106,7 +106,7 @@
 											    	<option value="" selected> - Selezionare - </option>
 											    	<option value="IN_MOVIMENTO" ${insert_satellite_attr.stato == 'IN_MOVIMENTO'?'selected':''}>IN MOVIMENTO</option>
 											      	<option value="FISSO" ${insert_satellite_attr.stato == 'FISSO'?'selected':''}>FISSO</option>
-											      	<option value="DISABILITATO" ${insert_satellite_attr.stato == 'DISABILITATO'?'selected':''}>DISABILITATOS</option>
+											      	<option value="DISABILITATO" ${insert_satellite_attr.stato == 'DISABILITATO'?'selected':''}>DISABILITATO</option>
 										    	</select>
 										    </spring:bind>
 										    <form:errors  path="stato" cssClass="error_field" />
