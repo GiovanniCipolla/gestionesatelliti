@@ -45,7 +45,7 @@ public class SatelliteController {
 	@PostMapping("/list")
 	public String listByExample(Satellite example, ModelMap model) {
 		List<Satellite> results = satelliteService.findByExample(example);
-		model.addAttribute("impiegato_list_attribute", results);
+		model.addAttribute("satellite_list_attribute", results);
 		return "satellite/list";
 	}
 
@@ -93,7 +93,7 @@ public class SatelliteController {
 				return "satellite/insert";
 			}
 
-			if ( satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
+			if (satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
 				result.rejectValue("dataRientro", "error.satellite",
 						"con questo stato , la data di lancio deve essere successiva alla data odierna");
 				return "satellite/insert";
@@ -121,22 +121,86 @@ public class SatelliteController {
 	@GetMapping("/delete/{idSatellite}")
 	public String prepareDelete(@PathVariable(required = true) Long idSatellite, Model model,
 			RedirectAttributes redirectAttributes) {
-		
+
 		Satellite verificaSatellite = satelliteService.caricaSingoloElemento(idSatellite);
-		
+
 		if (verificaSatellite.getStato() != null) {
 			redirectAttributes.addFlashAttribute("errorMessage",
 					"Impossibile eliminare il satellite perché è in uno stato non eliminabile.");
 			return "redirect:/satellite";
 		}
-		
+
 		model.addAttribute("delete_satellite_attr", verificaSatellite);
 		return "satellite/delete";
 	}
-	
+
 	@PostMapping("/delete")
-	public String delete(Long id,RedirectAttributes redirectAttrs) {
+	public String delete(Long id, RedirectAttributes redirectAttrs) {
 		satelliteService.rimuovi(id);
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
+
+	@GetMapping("/edit/{idSatellite}")
+	public String edit(@PathVariable(required = true) Long idSatellite, Model model) {
+		model.addAttribute("edit_satellite_attr", satelliteService.caricaSingoloElemento(idSatellite));
+		return "satellite/edit";
+	}
+
+	@PostMapping("/update")
+	public String update(@Valid @ModelAttribute("edit_satellite_attr") Satellite satellite, BindingResult result,
+			RedirectAttributes redirectAttrs) {
+
+		if (result.hasErrors())
+			return "impiegato/edit";
+
+
+		if (satellite.getDataRientro() != null && satellite.getDataLancio() == null) {
+			result.rejectValue("dataLancio", "error.satellite", "Inserisci anche la data di lancio");
+			return "satellite/edit";
+		}
+
+		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null
+				&& satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0) {
+			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
+			return "satellite/edit";
+		}
+
+		if (satellite.getStato() == null) {
+			if (satellite.getDataLancio() != null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"se non è stato inserito lo stato non si può inserire una data");
+				return "satellite/edit";
+			}
+			if (satellite.getDataRientro() != null) {
+				result.rejectValue("dataRientro", "error.satellite",
+						"se non è stato inserito lo stato non si può inserire una data");
+				return "satellite/edit";
+			}
+		} else if (satellite.getStato().equals(satellite.getStato().FISSO)
+				|| satellite.getStato().equals(satellite.getStato().IN_MOVIMENTO)) {
+
+			if (satellite.getDataLancio() == null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"con questo stato , la data di lancio è obbligatoria");
+				return "satellite/edit";
+			}
+
+			if (satellite.getDataRientro() != null && satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
+				result.rejectValue("dataRientro", "error.satellite",
+						"con questo stato , la data di lancio deve essere successiva alla data odierna");
+				return "satellite/edit";
+			}
+		} else {
+			if (satellite.getDataLancio() == null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"con questo stato , la data di lancio è obbligatoria");
+				return "satellite/edit";
+			}
+		}
+		
+		satelliteService.aggiorna(satellite);
+
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
 	}

@@ -53,7 +53,7 @@
 				        <h5>Lista dei risultati</h5> 
 				    </div>
 				    <div class='card-body'>
-				    	<a class="btn btn-primary " href="${pageContext.request.contextPath}/impiegato/insert">Add New</a>
+				    	<a class="btn btn-primary " href="${pageContext.request.contextPath}/satellite/insert">Add New</a>
 				    
 				        <div class='table-responsive'>
 				            <table class='table table-striped ' >
