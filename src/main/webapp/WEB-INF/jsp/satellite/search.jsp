@@ -32,8 +32,8 @@
 							
 							
 								<div class="col-md-6">
-									<label for="descrizione" class="form-label">Descrizione </label>
-									<input type="text" name="descrizione" id="descrizione" class="form-control" placeholder="Inserire la descrizione"  >
+									<label for="denominazione" class="form-label">denominazione </label>
+									<input type="text" name="denominazione" id="denominazione" class="form-control" placeholder="Inserire la denominazione"  >
 								</div>
 								
 								<div class="col-md-6">
@@ -50,9 +50,9 @@
 								</div>
 								
 								<div class="col-md-3">
-									<label for="dataRitorno" class="form-label">Data di ritorno (entro :) </label>
-                        			<input class="form-control" id="dataRitorno" type="date" placeholder="dd/MM/yy"
-                            			title="formato : gg/mm/aaaa"  name="dataRitorno"   >
+									<label for="dataRientro" class="form-label">Data di rientro (entro :) </label>
+                        			<input class="form-control" id="dataRientro" type="date" placeholder="dd/MM/yy"
+                            			title="formato : gg/mm/aaaa"  name=dataRientro   >
 								</div>
 								
 								<div class="col-md-3">

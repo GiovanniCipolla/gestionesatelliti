@@ -59,17 +59,17 @@
 									
 									
 										<div class="col-md-6">
-											<label for="descrizione" class="form-label">Descrizione <span class="text-danger">*</span></label>
-											<spring:bind path="descrizione">
-												<input type="text" name="descrizione" id="descrizione" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire il nome" value="${insert_satellite_attr.descrizione }" required>
+											<label for="denominazione" class="form-label">denominazione <span class="text-danger">*</span></label>
+											<spring:bind path="denominazione">
+												<input type="text" name="denominazione" id="denominazione" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire denominazione" value="${insert_satellite_attr.denominazione }" required>
 											</spring:bind>
-											<form:errors  path="descrizione" cssClass="error_field" />
+											<form:errors  path="denominazione" cssClass="error_field" />
 										</div>
 										
 										<div class="col-md-6">
 											<label for="codice" class="form-label">Codice <span class="text-danger">*</span></label>
 											<spring:bind path="codice">
-												<input type="text" name="codice" id="codice" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire il cognome" value="${insert_satellite_attr.codice }" required>
+												<input type="text" name="codice" id="codice" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire il codice" value="${insert_satellite_attr.codice }" required>
 											</spring:bind>
 											<form:errors  path="codice" cssClass="error_field" />
 										</div>
@@ -89,18 +89,18 @@
 			                            	<form:errors  path="dataLancio" cssClass="error_field" />
 										</div>
 										
-										<fmt:parseDate value="${insert_satellite_attr.dataRitorno}" pattern="yyyy-MM-dd" var="localDateToBeParsed" type="date"/>
+										<fmt:parseDate value="${insert_satellite_attr.dataRientro}" pattern="yyyy-MM-dd" var="localDateToBeParsed" type="date"/>
 										<fmt:formatDate pattern="yyyy-MM-dd" value="${localDateToBeParsed}" var="parsedDate"/>
 										<div class="col-md-3">
-											<label for="dataRitorno" class="form-label">Data di ritorno </label>
-			                        		<input class="form-control ${status.error ? 'is-invalid' : ''}" id="dataRitorno" type="date" placeholder="dd/MM/yy"
-			                            		title="formato : gg/mm/aaaa"  name="dataRitorno" required 
+											<label for="dataRientro" class="form-label">Data di ritorno </label>
+			                        		<input class="form-control ${status.error ? 'is-invalid' : ''}" id="dataRientro" type="date" placeholder="dd/MM/yy"
+			                            		title="formato : gg/mm/aaaa"  name="dataRientro" required 
 			                            		value="${parsedDate}" >		           
-			                            	<form:errors  path="dataRitorno" cssClass="error_field" />
+			                            	<form:errors  path="dataRientro" cssClass="error_field" />
 										</div>
 										
 										<div class="col-md-3">
-											<label for="stato" class="form-label">Stato <span class="text-danger">*</span></label>
+											<label for="stato" class="form-label">Stato</label>
 										    <spring:bind path="stato">
 											    <select class="form-select ${status.error ? 'is-invalid' : ''}" id="stato" name="stato" required>
 											    	<option value="" selected> - Selezionare - </option>

@@ -1,5 +1,6 @@
 package it.prova.gestionesatelliti.web.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,10 +23,10 @@ import it.prova.gestionesatelliti.service.SatelliteService;
 @Controller
 @RequestMapping(value = "/satellite")
 public class SatelliteController {
-	
+
 	@Autowired
 	private SatelliteService satelliteService;
-	
+
 	@GetMapping
 	public ModelAndView listAll() {
 		ModelAndView mv = new ModelAndView();
@@ -39,33 +40,73 @@ public class SatelliteController {
 	public String search() {
 		return "satellite/search";
 	}
-	
+
 	@PostMapping("/list")
 	public String listByExample(Satellite example, ModelMap model) {
 		List<Satellite> results = satelliteService.findByExample(example);
 		model.addAttribute("impiegato_list_attribute", results);
 		return "satellite/list";
 	}
-	
+
 	@GetMapping("/insert")
 	public String create(Model model) {
 		model.addAttribute("insert_satellite_attr", new Satellite());
-		return "Satellite/insert";
+		return "satellite/insert";
 	}
-	
-//	@PostMapping("/save")
-//	public String save(@Valid @ModelAttribute("insert_impiegato_attr") Impiegato impiegato, BindingResult result,
-//			RedirectAttributes redirectAttrs) {
-//
-//		if (result.hasErrors())
-//			return "impiegato/insert";
-//
-//		impiegatoService.inserisciNuovo(impiegato);
-//
-//		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
-//		return "redirect:/impiegato";
-//	}
-	
-	
-	
+
+	@PostMapping("/save")
+	public String save(@Valid @ModelAttribute("insert_satellite_attr") Satellite satellite, BindingResult result,
+			RedirectAttributes redirectAttrs) {
+
+		if (result.hasErrors())
+			return "satellite/insert";
+
+		if (satellite.getDataRientro() != null && satellite.getDataLancio() == null) {
+			result.rejectValue("dataLancio", "error.satellite", "Inserisci anche la data di lancio");
+			return "satellite/insert";
+		}
+
+		if (satellite.getDataRientro().compareTo(satellite.getDataLancio()) < 0) {
+			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
+			return "satellite/insert";
+		}
+
+		if (satellite.getStato() == null) {
+			if (satellite.getDataLancio() != null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"se non è stato inserito lo stato non si può inserire una data");
+				return "satellite/insert";
+			}
+			if (satellite.getDataRientro() != null) {
+				result.rejectValue("dataRientro", "error.satellite",
+						"se non è stato inserito lo stato non si può inserire una data");
+				return "satellite/insert";
+			}
+		} else if (satellite.getStato().equals(satellite.getStato().FISSO)
+				|| satellite.getStato().equals(satellite.getStato().IN_MOVIMENTO)) {
+
+			if (satellite.getDataLancio() == null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"con questo stato , la data di lancio è obbligatoria");
+				return "satellite/insert";
+			}
+
+			if (satellite.getDataRientro().compareTo(LocalDate.now()) < 0) {
+				result.rejectValue("dataRientro", "error.satellite",
+						"con questo stato , la data di lancio deve essere successiva alla data odierna");
+				return "satellite/insert";
+			}
+		} else {
+			if (satellite.getDataLancio() == null) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"con questo stato , la data di lancio è obbligatoria");
+				return "satellite/insert";
+			}
+		}
+
+		satelliteService.inserisciNuovo(satellite);
+
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
 }
