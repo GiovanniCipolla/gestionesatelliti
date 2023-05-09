@@ -91,14 +91,14 @@
 												<a class="btn btn-outline-danger btn-sm" href="${pageContext.request.contextPath}/satellite/delete/${SatelliteItem.id }">Delete</a>
 											</td>
 											<td>
-												<c:if test="${SatelliteItem.stato == null && SatelliteItem.dataLancio == null} " > 
+												<c:if test="${SatelliteItem.stato == null && SatelliteItem.dataLancio == null}" > 
 												<form:form method="post" action="${pageContext.request.contextPath}/satellite/lancia">
 												    <input type="hidden" name="id" value="${SatelliteItem.id}">
 												    <button type="submit" class="btn btn-success btn-sm">Lancia</button>
 												</form:form>
 												</c:if>
-												<c:if test="${SatelliteItem.dataLancio != null && SatelliteItem.dataRientro == null}">
-												<form:form method="post" action="${pageContext.request.contextPath}/satellite/rientro"  >
+												<c:if test="${SatelliteItem.dataLancio != null && SatelliteItem.dataRientro == null && SatelliteItem.stato != 'DISABILITATO'}">
+												<form:form method="post" action="${pageContext.request.contextPath}/satellite/rientro" >
 													<input type="hidden" name="id" value="${SatelliteItem.id}">
 													<button type="submit" class="btn btn-warning btn-sm">Rientra</button>
 												</form:form>

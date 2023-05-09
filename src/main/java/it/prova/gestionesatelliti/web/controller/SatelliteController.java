@@ -37,7 +37,6 @@ public class SatelliteController {
 		mv.setViewName("satellite/list");
 		return mv;
 	}
-	
 
 	@GetMapping("/search")
 	public String search() {
@@ -50,21 +49,21 @@ public class SatelliteController {
 		model.addAttribute("satellite_list_attribute", results);
 		return "satellite/list";
 	}
-	
+
 	@GetMapping("/lanciatiDaPiu2Anni")
 	public String lanciatiDaPiu2Anni(ModelMap model) {
 		List<Satellite> results = satelliteService.lanciatiDa2AnniOPiuAttivi();
 		model.addAttribute("satellite_list_attribute", results);
 		return "satellite/list";
 	}
-	
+
 	@GetMapping("/disattivatiNonRientrati")
 	public String disattivatiNonRientrati(ModelMap model) {
 		List<Satellite> results = satelliteService.disattivatiInOrbita();
 		model.addAttribute("satellite_list_attribute", results);
 		return "satellite/list";
 	}
-	
+
 	@GetMapping("/Fissi10")
 	public String Fissi10(ModelMap model) {
 		List<Satellite> results = satelliteService.lanciatiDa10AnniFissi();
@@ -95,14 +94,9 @@ public class SatelliteController {
 			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
 			return "satellite/insert";
 		}
-		if(satellite.getStato().equals(satellite.getStato().DISABILITATO ) && satellite.getDataLancio().isAfter(LocalDate.now() )  ) {
-			result.rejectValue("dataLancio", "error.satellite",
-					"questo stato non può avere una data di lancio futura");
-			return "satellite/insert";
-		}
 
 		if (satellite.getStato() == null) {
-			if (satellite.getDataLancio() != null) {
+			if (satellite.getDataLancio() != null && satellite.getDataLancio().isBefore(LocalDate.now()) ) {
 				result.rejectValue("dataLancio", "error.satellite",
 						"se non è stato inserito lo stato non si può inserire una data");
 				return "satellite/insert";
@@ -126,8 +120,14 @@ public class SatelliteController {
 						"con questo stato , la data di rientro non può essere già avvenuta ");
 				return "satellite/insert";
 			}
+			if (satellite.getDataLancio() != null && satellite.getDataLancio().isAfter(LocalDate.now())) {
+				result.rejectValue("dataLancio", "error.satellite",
+						"con questo stato , la data di lancio programmata non può avere questo stato ");
+				return "satellite/insert";
+			}
+			
 		} else {
-			if (satellite.getDataLancio() == null) {
+			if (satellite.getDataLancio() == null || satellite.getDataLancio().isAfter(LocalDate.now())) {
 				result.rejectValue("dataLancio", "error.satellite",
 						"con questo stato , la data di lancio è obbligatoria");
 				return "satellite/insert";
@@ -182,7 +182,6 @@ public class SatelliteController {
 		if (result.hasErrors())
 			return "satellite/edit";
 
-
 		if (satellite.getDataRientro() != null && satellite.getDataLancio() == null) {
 			result.rejectValue("dataLancio", "error.satellite", "Inserisci anche la data di lancio");
 			return "satellite/edit";
@@ -191,12 +190,6 @@ public class SatelliteController {
 		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null
 				&& satellite.getDataRientro().isBefore(satellite.getDataLancio())) {
 			result.rejectValue("dataLancio", "error.satellite", "Inserisci la data di lancio prima del rientro");
-			return "satellite/edit";
-		}
-		
-		if(satellite.getStato().equals(satellite.getStato().DISABILITATO ) && satellite.getDataLancio().isAfter(LocalDate.now() )  ) {
-			result.rejectValue("dataLancio", "error.satellite",
-					"questo stato non può avere una data di lancio futura");
 			return "satellite/edit";
 		}
 
@@ -226,34 +219,58 @@ public class SatelliteController {
 				return "satellite/edit";
 			}
 		} else {
-			if (satellite.getDataLancio() == null) {
+			if (satellite.getDataLancio() == null || satellite.getDataLancio().isAfter(LocalDate.now())) {
 				result.rejectValue("dataLancio", "error.satellite",
 						"con questo stato , la data di lancio è obbligatoria");
 				return "satellite/edit";
 			}
 		}
-		
+
 		satelliteService.aggiorna(satellite);
 
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
 	}
-	
+
 	@PostMapping("/lancia")
 	public String lancia(@ModelAttribute("lancia_satellite_attr") Satellite satellite, BindingResult result,
 			RedirectAttributes redirectAttrs) {
-			satelliteService.lancio(satellite.getId());
-			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
-			return "redirect:/satellite";
-		}
-	
+		
+		satelliteService.lancio(satellite.getId());
+		
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
+
 	@PostMapping("/rientro")
 	public String rientro(@ModelAttribute("rientro_satellite_attr") Satellite satellite, BindingResult result,
 			RedirectAttributes redirectAttrs) {
-			satelliteService.rientro(satellite.getId());
-			redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		satelliteService.rientro(satellite.getId());
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
+	
+	@GetMapping("/confermaDisabilita")
+	public String confermaDisabilita(Model model) {
+		int quanti = satelliteService.listAllElements().size();
+		int quantiRientra = satelliteService.satellitiChePossonoRientrare().size();
+		model.addAttribute("quanti_satellite_attr", quanti);
+		model.addAttribute("rientrano_satellite_attr", quantiRientra);
+		return "satellite/emergenza";
+	}
+	
+	@PostMapping("/avvioDisabilita")
+	public String avvioDisabilita(RedirectAttributes redirectAttrs) {
+		
+		if(satelliteService.satellitiChePossonoRientrare().size() <1) {
+			redirectAttrs.addFlashAttribute("errorMessage", "non ci sono satelliti che possono essere disabilitati");
 			return "redirect:/satellite";
 		}
+		
+		satelliteService.rientraTuttiSatellitiPossibili();
+		
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/satellite";
+	}
 
-	
 }

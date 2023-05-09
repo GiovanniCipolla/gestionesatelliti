@@ -79,7 +79,7 @@
 			        <h2>Inserisci Nuovo Satellite</h2>
 			        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
 			        <a href="satellite/insert" class="icon-link">
-			          Vai alla funzionalità
+			          Inserisci
 			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
 			        </a>
 			      </div>
@@ -107,7 +107,7 @@
 			      </div>
 			    </div>
 			  </div>
-			  
+			  <a class="btn btn-danger btn-sm ml-auto" href="${pageContext.request.contextPath}/satellite/confermaDisabilita" style="margin-left: 85%;">DISABILITA TUTTI</a>
 			</main>
 			
 			<!-- Footer -->

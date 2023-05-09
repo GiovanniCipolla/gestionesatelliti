@@ -13,20 +13,13 @@ import it.prova.gestionesatelliti.model.StatoSatellite;
 
 
 public interface SatelliteRepository extends CrudRepository<Satellite, Long>,JpaSpecificationExecutor<Satellite>{
-
-	@Modifying
-	@Query(value = "update Satellite s set s.dataLancio = ?1, s.stato =?2 where id = ?3")
-	public void lancio(LocalDate now, StatoSatellite stato, Long id);
 	
-	@Modifying
-	@Query(value = "update Satellite s set s.dataRientro = ?1 , s.stato =?2 where id = ?3")
-	public void rientro(LocalDate now, StatoSatellite stato, Long id);
-	
-
 	List<Satellite> findAllByStatoInAndDataLancioLessThan(Iterable<StatoSatellite> stati, LocalDate dataLancio);
 
 	List<Satellite> findAllByStatoAndDataRientroIsNull(StatoSatellite statoSatellite);
 
 	List<Satellite> findAllByStatoAndDataLancioLessThan(StatoSatellite statoSatellite, LocalDate dataLancio);
 	
+	@Query("select s from Satellite s where s.dataLancio is not NULL AND s.dataRientro is NULL AND s.stato != 'DISABILITATO'")
+	List<Satellite> findSatellitesByDataLancioAndStatoSatellite(); 
 }

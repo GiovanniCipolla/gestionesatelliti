@@ -27,4 +27,7 @@ public interface SatelliteService {
 
 	public List<Satellite> lanciatiDa10AnniFissi();
 
+	public List<Satellite> satellitiChePossonoRientrare();
+	
+	public void rientraTuttiSatellitiPossibili();
 }

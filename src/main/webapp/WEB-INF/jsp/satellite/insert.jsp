@@ -119,6 +119,7 @@
 											class='btn btn-outline-secondary' style='width: 80px'> <i
 											class='fa fa-chevron-left'></i> Back
 										</a> 
+										<input class="btn btn-outline-warning" type="reset" value="Ripulisci">
 									</div>
 								</form:form>
 		  
